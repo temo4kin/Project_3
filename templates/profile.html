@@ -3,7 +3,6 @@
 {% block container %}
   <main class="container mt-3">
     <div class="card my-4 mx-auto">
-      {% for i in teachers_number %}
       <div class="card-body m-2 m-md-4">
         <article class="row">
           <div class="col-5"><img src="{{ teachers[uin]['picture'] }}" class="img-fluid" alt=""></div>
@@ -13,7 +12,7 @@
 
               <h1 class="h2">{{ teachers[uin]['name'] }}</h1>
               <p>{% for goal in teachers[uin]['goals'] %}<a href="/goal/{{ goal }}"> <span class="badge badge-secondary mr-2"> {{ goals[goal][0] }} {{ goals[goal][1] }} </span></a>{% endfor %}Рейтинг: {{ teachers[uin]['rating'] }} Ставка: {{ teachers[uin]['price'] }} / час</p>
-              <p>{{ teachers[i]['about'] }}</p>
+              <p>{{ teachers[uin]['about'] }}</p>
 
             </section>
 
@@ -29,7 +28,6 @@
           </div>
         </article>
       </div>
-      {% endfor %}
 
     </div>
   </main>
