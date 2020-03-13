@@ -72,7 +72,7 @@ def request_done():
                           time=time,
                           name=client_name_request,
                           phone=client_phone_request)
-    with open("request.json", "w") as f:
+    with open("request.json", "a") as f:
         json.dump(request_client, f)
     return render_template(
         "request_done.html",
@@ -110,7 +110,7 @@ def booking_done():
                   teacher=int(client_teacher),
                   name=client_name,
                   phone=client_phone)
-    with open("booking.json", "w") as f:
+    with open("booking.json", "a") as f:
         json.dump(client, f)
     return render_template(
         "booking_done.html",
