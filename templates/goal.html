@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block container %}
+
+  <main class="container mt-3">
+    <h1 class="h1 text-center w-50 mx-auto mt-1 py-5 mb-4"><strong>{{ goals[goal_name][0] }}</br>Преподаватели <br>  {{ goals[goal_name][1]|lower }}</strong></h1>
+
+      <div class="row">
+      <div class="col-12 col-lg-10 offset-lg-1 m-auto">
+        {% for teacher in teachers_goal|sort(attribute="rating", reverse=True) %}
+        <div class="card mb-4">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-3"><img src="{{ teacher['picture'] }}" class="img-fluid" alt=""></div>
+              <div class="col-9">
+                <p class="float-right">Рейтинг: {{ teacher['rating'] }} Ставка: {{ teacher['price'] }} / час</p>
+                <h2 class="h4">{{ teacher['name'] }}</h2>
+                <p>{{ teacher['about']|truncate(300) }}</p>
+                <a href="/profile/{{ teacher['id'] }}" class="btn btn-outline-primary btn-sm mr-3 mb-2">Показать информацию и расписание</a>
+
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+      </div>
+
+{% endblock %}
