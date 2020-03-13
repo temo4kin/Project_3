@@ -3,12 +3,17 @@ import datetime
 from random import sample
 from flask import Flask, render_template, request
 from data import goals, weekdays, teachers
+from flask_sqlalchemy import SQLAlchemy
 
 teachers_random = sample(teachers, 6)
 year = datetime.datetime.now().year
 
 
 app = Flask(__name__)
+
+class Teacher():
+    __tablename__ = "teachers"
+    pass
 
 @app.route('/')
 def index():
