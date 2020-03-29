@@ -1,13 +1,12 @@
 import json
-import datetime
+from datetime import datetime
 from os import path
 from random import sample
 from flask import Flask, render_template, request
 from data import goals_all, weekdays, teachers
 from flask_sqlalchemy import SQLAlchemy
 
-teachers_random = sample(teachers, 6)
-year = datetime.datetime.now().year
+year = datetime.now().year
 
 
 app = Flask(__name__)
@@ -16,73 +15,72 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///teachers.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+class Teacher(db.Model):
+    __tablename__ = 'teachers'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+    about = db.Column(db.Text)
+    rating = db.Column(db.Float)
+    picture = db.Column(db.String)
+    price = db.Column(db.Integer)
+    goals = db.Column(db.String)
+    # free = db.Column(db.Text)
+
+    bookings = db.relationship('Booking', back_populates='teacher_booking')
+
+
+class Booking(db.Model):
+    __tablename__ = 'bookings'
+
+    id = db.Column(db.Integer, primary_key=True)
+    weekday = db.Column(db.String(10))
+    time = db.Column(db.String)
+    name = db.Column(db.String)
+    phone = db.Column(db.String)
+
+    teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
+    teacher_booking = db.relationship('Teacher', back_populates='bookings')
+
+
+class Request(db.Model):
+    __tablename__ = 'requests'
+
+    id = db.Column(db.Integer, primary_key=True)
+    goal = db.Column(db.String)
+    time = db.Column(db.String)
+    name = db.Column(db.String)
+    phone = db.Column(db.String)
+
+
+class Goal(db.Model):
+    __tablename__ = 'goals'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(10))
+    emoji = db.Column(db.String(1))
+    name_rus = db.Column(db.String(20))
+
+
+class Free(db.Model):
+    __tablename__ = 'teachers_free'
+
+    id = db.Column(db.Integer, primary_key=True)
+    teacher_id = db.Column(db.Integer)
+    weekday = db.Column(db.String(5))
+    time8 = db.Column(db.Boolean)
+    time10 = db.Column(db.Boolean)
+    time12 = db.Column(db.Boolean)
+    time14 = db.Column(db.Boolean)
+    time16 = db.Column(db.Boolean)
+    time18 = db.Column(db.Boolean)
+    time20 = db.Column(db.Boolean)
+    time22 = db.Column(db.Boolean)
+
+
+db.create_all()
 check_file = path.exists('teachers.db')
 if not check_file:
-    class Teacher(db.Model):
-        __tablename__ = 'teachers'
-
-        id = db.Column(db.Integer, primary_key=True)
-        name = db.Column(db.String(50))
-        about = db.Column(db.Text)
-        rating = db.Column(db.Float)
-        picture = db.Column(db.String)
-        price = db.Column(db.Integer)
-        goals = db.Column(db.String)
-        # free = db.Column(db.Text)
-
-        bookings = db.relationship('Booking', back_populates='teacher_booking')
-
-
-    class Booking(db.Model):
-        __tablename__ = 'bookings'
-
-        id = db.Column(db.Integer, primary_key=True)
-        weekday = db.Column(db.String(10))
-        time = db.Column(db.String)
-        name = db.Column(db.String)
-        phone = db.Column(db.String)
-
-        teacher_id = db.Column(db.Integer, db.ForeignKey('teachers.id'))
-        teacher_booking = db.relationship('Teacher', back_populates='bookings')
-
-
-    class Request(db.Model):
-        __tablename__ = 'requests'
-
-        id = db.Column(db.Integer, primary_key=True)
-        goal = db.Column(db.String)
-        time = db.Column(db.String)
-        name = db.Column(db.String)
-        phone = db.Column(db.String)
-
-
-    class Goal(db.Model):
-        __tablename__ = 'goals'
-
-        id = db.Column(db.Integer, primary_key=True)
-        name = db.Column(db.String(10))
-        emoji = db.Column(db.String(1))
-        name_rus = db.Column(db.String(20))
-
-
-    class Free(db.Model):
-        __tablename__ = 'teachers_free'
-
-        id = db.Column(db.Integer, primary_key=True)
-        teacher_id = db.Column(db.Integer)
-        weekday = db.Column(db.String(5))
-        time8 = db.Column(db.Boolean)
-        time10 = db.Column(db.Boolean)
-        time12 = db.Column(db.Boolean)
-        time14 = db.Column(db.Boolean)
-        time16 = db.Column(db.Boolean)
-        time18 = db.Column(db.Boolean)
-        time20 = db.Column(db.Boolean)
-        time22 = db.Column(db.Boolean)
-
-
-    db.create_all()
-
     for teacher in teachers:
         goals = json.dumps(teacher['goals'])
         free = json.dumps(teacher['free'])
@@ -117,9 +115,12 @@ if not check_file:
 
     db.session.commit()
 
+teachers = db.session.query(Teacher).all()
+goals_all = db.session.query(Goal).all()
 
 @app.route('/')
 def index():
+    teachers_random = sample(teachers, 6)
     return render_template(
         'index.html',
         goals_all=goals_all,
@@ -136,13 +137,13 @@ def all():
 def goal(goal_name):
     teachers_goal = []
     for teacher in teachers:
-        if goal_name in teacher['goals']:
+        if goal_name in teacher.goals:
             teachers_goal.append(teacher)
+    goals_query = db.session.query(Goal).filter(Goal.name == goal_name).all()
     return render_template(
         'goal.html',
-        goals_all=goals_all,
+        goals_all=goals_query,
         teachers_goal=teachers_goal,
-        goal_name=goal_name,
         year=year
     )
 

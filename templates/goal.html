@@ -3,7 +3,7 @@
 {% block container %}
 
   <main class="container mt-3">
-    <h1 class="h1 text-center w-50 mx-auto mt-1 py-5 mb-4"><strong>{{ goals_all[goal_name][0] }}</br>Преподаватели <br>  {{ goals_all[goal_name][1]|lower }}</strong></h1>
+    <h1 class="h1 text-center w-50 mx-auto mt-1 py-5 mb-4"><strong>{{ goals_all[0]['emoji'] }}</br>Преподаватели <br>  {{ goals_all[0]['name_rus']|lower }}</strong></h1>
 
       <div class="row">
       <div class="col-12 col-lg-10 offset-lg-1 m-auto">
