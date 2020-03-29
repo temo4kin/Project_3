@@ -11,7 +11,7 @@
             <section class="teacher=info">
 
               <h1 class="h2">{{ teachers[uin]['name'] }}</h1>
-              <p>{% for goal in teachers[uin]['goals'] %}<a href="/goal/{{ goal }}"> <span class="badge badge-secondary mr-2"> {{ goals[goal][0] }} {{ goals[goal][1] }} </span></a>{% endfor %}Рейтинг: {{ teachers[uin]['rating'] }} Ставка: {{ teachers[uin]['price'] }} / час</p>
+              <p>{% for goal in teachers[uin]['goals'] %}<a href="/goal/{{ goal }}"> <span class="badge badge-secondary mr-2"> {{ goals_all[goal][0] }} {{ goals_all[goal][1] }} </span></a>{% endfor %}Рейтинг: {{ teachers[uin]['rating'] }} Ставка: {{ teachers[uin]['price'] }} / час</p>
               <p>{{ teachers[uin]['about'] }}</p>
 
             </section>
