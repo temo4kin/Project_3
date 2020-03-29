@@ -5,14 +5,14 @@
     <div class="card my-4 mx-auto">
       <div class="card-body m-2 m-md-4">
         <article class="row">
-          <div class="col-5"><img src="{{ teachers[uin]['picture'] }}" class="img-fluid" alt=""></div>
+          <div class="col-5"><img src="{{ teachers[uin].picture }}" class="img-fluid" alt=""></div>
           <div class="col-7">
 
             <section class="teacher=info">
 
-              <h1 class="h2">{{ teachers[uin]['name'] }}</h1>
-              <p>{% for goal in teachers[uin]['goals'] %}<a href="/goal/{{ goal }}"> <span class="badge badge-secondary mr-2"> {{ goals_all[goal][0] }} {{ goals_all[goal][1] }} </span></a>{% endfor %}Рейтинг: {{ teachers[uin]['rating'] }} Ставка: {{ teachers[uin]['price'] }} / час</p>
-              <p>{{ teachers[uin]['about'] }}</p>
+              <h1 class="h2">{{ teachers[uin].name }}</h1>
+              <p>{% for k in teacher_goals_numbers %}<a href="/goal/{{ goals_all[k].name }}"> <span class="badge badge-secondary mr-2"> {{ goals_all[k].emoji }} {{ goals_all[k].name_rus }} </span></a>{% endfor %}Рейтинг: {{ teachers[uin].rating }} Ставка: {{ teachers[uin].price }} / час</p>
+              <p>{{ teachers[uin].about }}</p>
 
             </section>
 
@@ -21,7 +21,7 @@
               <h4 class="mb-4 mt-5">Записаться на пробный урок</h4>
               {% for key, value in work_week.items() %}
               <h6 class="mt-4">{{ weekdays[key] }}</h6>
-              {% if (value|length) == 0 %}<p>Нет свободных уроков</p>{% else %}{% for times in value %}<a href="/booking/{{ teachers[uin]['id'] }}/{{ key }}/{{ times }}" class="btn btn-outline-success mr-2">{{ times }} свободно</a>{% endfor %}{% endif %}
+              {% if (value|length) == 0 %}<p>Нет свободных уроков</p>{% else %}{% for times in value %}<a href="/booking/{{ teachers[uin].id }}/{{ key }}/{{ times }}" class="btn btn-outline-success mr-2">{{ times }} свободно</a>{% endfor %}{% endif %}
               {% endfor %}
             </section>
 

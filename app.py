@@ -15,6 +15,7 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///teachers.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
+
 class Teacher(db.Model):
     __tablename__ = 'teachers'
 
@@ -25,7 +26,7 @@ class Teacher(db.Model):
     picture = db.Column(db.String)
     price = db.Column(db.Integer)
     goals = db.Column(db.String)
-    # free = db.Column(db.Text)
+    free = db.Column(db.Text)
 
     bookings = db.relationship('Booking', back_populates='teacher_booking')
 
@@ -62,23 +63,8 @@ class Goal(db.Model):
     name_rus = db.Column(db.String(20))
 
 
-class Free(db.Model):
-    __tablename__ = 'teachers_free'
-
-    id = db.Column(db.Integer, primary_key=True)
-    teacher_id = db.Column(db.Integer)
-    weekday = db.Column(db.String(5))
-    time8 = db.Column(db.Boolean)
-    time10 = db.Column(db.Boolean)
-    time12 = db.Column(db.Boolean)
-    time14 = db.Column(db.Boolean)
-    time16 = db.Column(db.Boolean)
-    time18 = db.Column(db.Boolean)
-    time20 = db.Column(db.Boolean)
-    time22 = db.Column(db.Boolean)
-
-
 db.create_all()
+
 check_file = path.exists('teachers.db')
 if not check_file:
     for teacher in teachers:
@@ -87,36 +73,23 @@ if not check_file:
         teacher = Teacher(id=teacher['id'], name=teacher['name'],
                           about=teacher['about'], rating=teacher['rating'],
                           picture=teacher['picture'], price=teacher['price'],
-                          goals=goals,
-                          )
+                          goals=goals, free=free)
         db.session.add(teacher)
 
-    db.session.commit()
+        number = 0
 
-    number = 0
+    db.session.commit()
 
     for key, goal in goals_all.items():
         goal = Goal(id=number, name=key, emoji=goal[0], name_rus=goal[1])
         number += 1
         db.session.add(goal)
 
-    number = 0
-
-    for teacher in teachers:
-        for key, free in teacher['free'].items():
-            free = Free(teacher_id=number, weekday=key, time8=free['8:00'],
-                        time10=free['10:00'], time12=free['12:00'],
-                        time14=free['14:00'], time16=free['16:00'],
-                        time18=free['18:00'], time20=free['20:00'],
-                        time22=free['22:00']
-                        )
-            db.session.add(free)
-        number += 1
-
     db.session.commit()
 
 teachers = db.session.query(Teacher).all()
 goals_all = db.session.query(Goal).all()
+
 
 @app.route('/')
 def index():
@@ -154,16 +127,29 @@ def profile(uin):
     days_week = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun']
 
     num = 0
-    for day in teachers[uin]['free']:
-        free_slots = {x: True for x in teachers[uin]['free'][day].keys() if teachers[uin]['free'][day][x] == True}
+    free = json.loads(teachers[uin].free)
+    teacher_goals = json.loads(teachers[uin].goals)
+    for day in free:
+        free_slots = {x: True for x in free[day].keys() if free[day][x] == True}
         work_week[days_week[num]] = free_slots
         num += 1
+
+    teacher_goals_numbers = []
+
+    for t in teacher_goals:
+        k = 0
+        for i in goals_all:
+            if t == i.name:
+                teacher_goals_numbers.append(k)
+            k += 1
+    teacher_goals_numbers.sort()
 
     return render_template(
         'profile.html',
         teachers=teachers,
         uin=uin,
         goals_all=goals_all,
+        teacher_goals_numbers=teacher_goals_numbers,
         weekdays=weekdays,
         work_week=work_week,
         year=year
