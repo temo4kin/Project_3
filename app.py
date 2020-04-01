@@ -5,6 +5,8 @@ from random import sample
 from flask import Flask, render_template, request
 from data import goals_all, weekdays, teachers
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf import FlaskForm
+from wtforms import StringField, HiddenField
 
 year = datetime.now().year
 
@@ -64,6 +66,14 @@ class Goal(db.Model):
 
 
 db.create_all()
+
+
+class MyForm(FlaskForm):
+    name = StringField('Вас зовут')
+    phone = StringField('Ваш телефон')
+    weekday = HiddenField('День недели')
+    time = HiddenField('Время занятия')
+    teacher_id = HiddenField('ID преподавателя')
 
 check_file = path.exists('teachers.db')
 if not check_file:
@@ -184,39 +194,43 @@ def request_done():
     )
 
 
-@app.route('/booking/<int:teacher_id>/<day>/<time>')
+@app.route('/booking/<int:teacher_id>/<day>/<time>', methods=["GET", "POST"])
 def booking(teacher_id, day, time):
-    return render_template(
-        'booking.html',
-        teachers=teachers,
-        teacher_id=teacher_id,
-        weekdays=weekdays,
-        day=day,
-        time=time,
-        year=year
-    )
+    form = MyForm()
 
 
-@app.route('/booking_done', methods=['POST'])
-def booking_done():
-    client_weekday = request.form.get('clientWeekday')
-    client_time = request.form.get('clientTime')
-    client_teacher = request.form.get('clientTeacher')
-    client_name = request.form.get('clientName')
-    client_phone = request.form.get('clientPhone')
-    client = dict(weekday=client_weekday,
-                  time=client_time,
-                  teacher=int(client_teacher),
-                  name=client_name,
-                  phone=client_phone)
-    with open('booking.json', 'a') as f:
-        json.dump(client, f)
-    return render_template(
-        'booking_done.html',
-        weekdays=weekdays,
-        client=client,
-        year=year
-    )
+    if request.method == "POST":
+
+        weekday = form.weekday.data
+        time = form.time.data
+        name = form.name.data
+        phone = form.phone.data
+        teacher_id = form.teacher_id.data
+        booking = Booking(weekday=weekday, time=time, name=name, phone=phone, teacher_id=teacher_id)
+        form.populate_obj(booking)
+        db.session.add(booking)
+        db.session.commit()
+        print(teacher_id, day, time, weekdays['day'])
+        return render_template(
+            'booking_done.html',
+            weekday=day,
+            time=time,
+            teacher_id=teacher_id,
+            name=name,
+            phone=phone,
+            year=year,
+        )
+    else:
+        return render_template(
+            'booking.html',
+            form=form,
+            teachers=teachers,
+            teacher_id=teacher_id,
+            weekdays=weekdays,
+            day=day,
+            time=time,
+            year=year
+        )
 
 @app.errorhandler(500)
 def render_server_error(error):

@@ -7,24 +7,24 @@
       <div class="col-10 col-md-6 offset-1 offset-md-3 mb-3">
         <form action="/booking_done" class="card mb-3" method="POST">
           <div class="card-body text-center pt-5">
-            <img src="{{ teachers[teacher_id]['picture'] }}" class="mb-3" width="95" alt="">
-            <h2 class="h5 card-title mt-2 mb-2">{{ teachers[teacher_id]['name'] }}</h2>
+            <img src="{{ teachers[teacher_id].picture }}" class="mb-3" width="95" alt="">
+            <h2 class="h5 card-title mt-2 mb-2">{{ teachers[teacher_id].name }}</h2>
             <p class="my-1">Запись на пробный урок</p>
             <p class="my-1">{{ weekdays[day] }}, {{ time }}</p>
           </div>
           <hr />
           <div class="card-body mx-3">
               <div class="row">
-                  <input class="form-control" type="hidden" name="clientWeekday" value="{{ day }}">
-                  <input class="form-control" type="hidden" name="clientTime" value="{{ time }}">
-                  <input class="form-control" type="hidden" name="clientTeacher" value="{{ teacher_id }}">
+                {{ form.weekday(value=day) }}
+                {{ form.time(value=time) }}
+                {{ form.teacher_id(value=teacher_id) }}
               </div>
 
-            <label class="mb-1 mt-2" for="clientName">Вас зовут</label>
-            <input class="form-control" type="text" name="clientName" id="clientName">
-
-            <label class="mb-1 mt-2" for="clientPhone">Ваш телефон</label>
-            <input class="form-control" type="tel"  name="clientPhone" id="clientPhone">
+          {{ form.csrf_token }}
+          {{ form.name.label(class_='mb-1 mt-2') }}
+          {{ form.name(class_='form-control') }}
+          {{ form.phone.label(class_='mb-1 mt-2') }}
+          {{ form.phone(class_='form-control') }}
 
             <input type="submit" class="btn btn-primary btn-block mt-4" value="Записаться на пробный урок">
 
