@@ -6,8 +6,8 @@
     <h1 class="h1 text-center mx-auto mt-4 py-5"><strong>Страница не найдена. <br>Вернитесь на <a href="/">главную</a></strong></h1>
     <div class="text-center mb-5">
       <div class="btn-group mx-auto mb-0" role="group" aria-label="Basic example">
-        {% for key, value in goals_all.items() %}
-        <a href="goal/{{ key }}" class="btn btn-outline-secondary">{{ value[0] }} {{ value[1] }}</a>
+        {% for goal in goals_all %}
+        <a href="goal/{{ goal['name'] }}" class="btn btn-outline-secondary">{{ goal['emoji'] }} {{ goal['name_rus'] }}</a>
         {% endfor %}
       </div>
     </div>

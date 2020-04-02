@@ -198,22 +198,29 @@ def request_done():
 def booking(teacher_id, day, time):
     form = MyForm()
 
+    print(teacher_id, day, time, weekdays[day])
 
     if request.method == "POST":
+
+        print(teacher_id, day, time, weekdays[day])
 
         weekday = form.weekday.data
         time = form.time.data
         name = form.name.data
         phone = form.phone.data
         teacher_id = form.teacher_id.data
+
         booking = Booking(weekday=weekday, time=time, name=name, phone=phone, teacher_id=teacher_id)
         form.populate_obj(booking)
+
         db.session.add(booking)
         db.session.commit()
-        print(teacher_id, day, time, weekdays['day'])
+
+
+        
         return render_template(
             'booking_done.html',
-            weekday=day,
+            weekday=weekdays[day],
             time=time,
             teacher_id=teacher_id,
             name=name,
@@ -221,6 +228,7 @@ def booking(teacher_id, day, time):
             year=year,
         )
     else:
+        print('Демонстрация формы')
         return render_template(
             'booking.html',
             form=form,
