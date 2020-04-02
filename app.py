@@ -69,10 +69,10 @@ db.create_all()
 
 
 class MyForm(FlaskForm):
-    name = StringField('Вас зовут')
-    phone = StringField('Ваш телефон')
     weekday = HiddenField('День недели')
     time = HiddenField('Время занятия')
+    name = StringField('Вас зовут')
+    phone = StringField('Ваш телефон')
     teacher_id = HiddenField('ID преподавателя')
 
 check_file = path.exists('teachers.db')
@@ -196,24 +196,20 @@ def request_done():
 
 @app.route('/booking/<int:teacher_id>/<day>/<time>', methods=["GET", "POST"])
 def booking(teacher_id, day, time):
-    form = MyForm()
+
 
     print(teacher_id, day, time, weekdays[day])
 
     if request.method == "POST":
+        form = MyForm()
+        booking_new = Booking()
+
+        form.populate_obj(booking_new)
 
         print(teacher_id, day, time, weekdays[day])
 
-        weekday = form.weekday.data
-        time = form.time.data
-        name = form.name.data
-        phone = form.phone.data
-        teacher_id = form.teacher_id.data
 
-        booking = Booking(weekday=weekday, time=time, name=name, phone=phone, teacher_id=teacher_id)
-        form.populate_obj(booking)
-
-        db.session.add(booking)
+        db.session.add(booking_new)
         db.session.commit()
 
 
@@ -228,6 +224,7 @@ def booking(teacher_id, day, time):
             year=year,
         )
     else:
+        form = MyForm()
         print('Демонстрация формы')
         return render_template(
             'booking.html',
