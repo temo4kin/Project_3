@@ -194,7 +194,7 @@ def request_done():
     )
 
 
-@app.route('/booking/<int:teacher_id>/<day>/<time>', methods=["GET", "POST"])
+@app.route('/booking/<int:teacher_id>/<day>/<time>', methods=['GET', 'POST'])
 def booking(teacher_id, day, time):
 
 
@@ -202,12 +202,16 @@ def booking(teacher_id, day, time):
 
     if request.method == "POST":
         form = MyForm()
-        booking_new = Booking()
-
-        form.populate_obj(booking_new)
 
         print(teacher_id, day, time, weekdays[day])
 
+        weekday = form.weekday.data
+        time = form.time.data
+        name = form.name.data
+        phone = form.phone.data
+        teacher_id = form.teacher_id.data
+
+        booking_new = Booking(weekday=weekday, time=time, name=name, phone=phone, teacher_id=teacher_id)
 
         db.session.add(booking_new)
         db.session.commit()
