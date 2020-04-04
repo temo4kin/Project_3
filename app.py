@@ -37,7 +37,7 @@ class Booking(db.Model):
     __tablename__ = 'bookings'
 
     id = db.Column(db.Integer, primary_key=True)
-    weekday = db.Column(db.String(10))
+    day = db.Column(db.String(10))
     time = db.Column(db.String)
     name = db.Column(db.String)
     phone = db.Column(db.String)
@@ -69,7 +69,7 @@ db.create_all()
 
 
 class MyForm(FlaskForm):
-    weekday = HiddenField('День недели')
+    day = HiddenField('День недели')
     time = HiddenField('Время занятия')
     name = StringField('Вас зовут')
     phone = StringField('Ваш телефон')
@@ -200,18 +200,18 @@ def booking(teacher_id, day, time):
 
     print(teacher_id, day, time, weekdays[day])
 
-    if request.method == "POST":
+    if request.method == 'POST':
         form = MyForm()
 
         print(teacher_id, day, time, weekdays[day])
 
-        weekday = form.weekday.data
+        day = form.weekday.data
         time = form.time.data
         name = form.name.data
         phone = form.phone.data
-        teacher_id = form.teacher_id.data
 
-        booking_new = Booking(weekday=weekday, time=time, name=name, phone=phone, teacher_id=teacher_id)
+
+        booking_new = Booking(day=day, time=time, name=name, phone=phone, teacher_booking=teacher_id)
 
         db.session.add(booking_new)
         db.session.commit()
@@ -220,7 +220,7 @@ def booking(teacher_id, day, time):
         
         return render_template(
             'booking_done.html',
-            weekday=weekdays[day],
+            day=weekdays[day],
             time=time,
             teacher_id=teacher_id,
             name=name,
