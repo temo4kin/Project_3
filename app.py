@@ -198,20 +198,18 @@ def request_done():
 def booking(teacher_id, day, time):
 
 
-    print(teacher_id, day, time, weekdays[day])
-
     if request.method == 'POST':
         form = MyForm()
 
         print(teacher_id, day, time, weekdays[day])
 
-        day = form.weekday.data
+        day = form.day.data
         time = form.time.data
         name = form.name.data
         phone = form.phone.data
 
 
-        booking_new = Booking(day=day, time=time, name=name, phone=phone, teacher_booking=teacher_id)
+        booking_new = Booking(day=day, time=time, name=name, phone=phone, teacher_id=teacher_id)
 
         db.session.add(booking_new)
         db.session.commit()
@@ -260,4 +258,4 @@ def render_not_found(error):
 
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)

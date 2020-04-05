@@ -5,7 +5,7 @@
   <main class="container mt-3">
     <div class="row mt-5">
       <div class="col-10 col-md-6 offset-1 offset-md-3 mb-3">
-        <form action="/booking" class="card mb-3" method="POST">
+        <form action="/booking/{{ teacher_id }}/{{ day }}/{{ time }}" class="card mb-3" method="POST">
           <div class="card-body text-center pt-5">
             <img src="{{ teachers[teacher_id].picture }}" class="mb-3" width="95" alt="">
             <h2 class="h5 card-title mt-2 mb-2">{{ teachers[teacher_id].name }}</h2>
